@@ -34,6 +34,7 @@ export default function Modal({ onClose, children }) {
   };
 
   // ! ====== Render modal window ======
+
     return createPortal(
       <Backdrop  onClick={handleBackdropClick}>
         <Content >{children}</Content>

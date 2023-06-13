@@ -48,7 +48,7 @@ export default function App() {
       };
     }
     getPhotos();
-  }, [query, page]
+  }, [query, page, totalPage]
   );
 
     // ! ====== Write user query to state ======
