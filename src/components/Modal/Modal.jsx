@@ -1,48 +1,48 @@
-import React, { Component } from 'react';
+import React from 'react';
+import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import './Modal.styled.jsx';
 import { Backdrop, Content } from './Modal.styled.jsx';
+import PropTypes from 'prop-types';
 
 const modalRoot = document.querySelector('#modal-root');
 
-export default class Modal extends Component {
+export default function Modal({ onClose, children }) {
+  useEffect(() => {
 
-  // ! ====== Add Event Listener for click Escape open modal
-
-  componentDidMount() {
-    window.addEventListener('keydown', this.handleKeyDown);
-  }
-
-  // ! ====== Remove Event Listener for click Escape open modal
-
-  componentWillMount() {
-    window.removeEventListener('keydown', this.handleKeyDown);
-  }
-
-  // ! ====== Common function for click Escape (window) ======
-
-handleKeyDown = e => {
+    // ! ====== Function for click Escape (window) ======
+    const handleKeyDown = e => {
     if (e.code === 'Escape') {
-      this.props.onClose();
+      onClose();
+      }
+    };
+
+    // ! ====== Set addEventListener for click Escape ====
+     window.addEventListener('keydown', handleKeyDown);
+
+    // ! ====== Remove removeEventListener for click Escape after close modal window ======
+    return () => {
+    window.removeEventListener('keydown', handleKeyDown);
     }
-};
+  }, [onClose]);
 
   // ! ====== Close modal window for click backdrop ======
-  handleBackdropClick = event => {
+  const handleBackdropClick = event => {
       if (event.currentTarget === event.target) {
-      this.props.onClose();
+      onClose();
     }
   };
 
   // ! ====== Render modal window ======
-  render() {
-    const { children } = this.props;
     return createPortal(
-      <Backdrop  onClick={this.handleBackdropClick}>
+      <Backdrop  onClick={handleBackdropClick}>
         <Content >{children}</Content>
       </Backdrop>,
-      modalRoot,
+      modalRoot
     );
-  }
 }
 
+Modal.propTypes = {
+  onClose: PropTypes.func.isRequired,
+  children: PropTypes.object.isRequired
+};

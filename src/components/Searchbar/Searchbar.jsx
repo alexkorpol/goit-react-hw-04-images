@@ -1,48 +1,39 @@
-import React, { Component } from 'react';
+import React, { useState} from 'react';
 import { SearchForm, SearchFormButton, SearchFormInput, SearchbarHeader } from './Searchbar.styled';
 import { HiMagnifyingGlass } from 'react-icons/hi2';
 import Notiflix from 'notiflix';
+import PropTypes from 'prop-types';
 
 
-const INITIAL_STATE = {
-  query: '',
-};
+export default function Searchbar({onSubmit}) {
+   const [query, setQuery] = useState('');
 
-export default class Searchbar extends Component {
+// ! ====== Function reset of query after submit to App ======
+  const reset = () => setQuery('');
 
-  state = {
-    ...INITIAL_STATE,
+// !====== Function write in query after enter 1 letter ======
+  const onChange = e => {
+    setQuery(e.target.value.trim());
   };
 
-  onChange = e => {
-    this.setState({ query: e.target.value.trim()});
-  };
-
-  onSubmit = e => {
+// ! ====== Function broadcast query to App ==================
+    const onSubmitQuery = e => {
     e.preventDefault();
-
-    const { query } = this.state;
 
     if (query === ""){
        Notiflix.Notify.info('Please enter keyword for photos you are looking for')
       return;
     }
-    
-    this.props.onSubmit(query);
-    this.reset();
+    onSubmit(query);
+    reset();
   };
 
-  reset = () => this.setState({ ...INITIAL_STATE });
-
-  render() {
-    const { query } = this.state;
-
-
+  // ! ====== render ======
 
     return (
       <>
         <SearchbarHeader >
-        <SearchForm onSubmit={this.onSubmit}>
+        <SearchForm onSubmit={onSubmitQuery}>
             <SearchFormButton type="submit" >
               <HiMagnifyingGlass size="24" />
           </SearchFormButton>
@@ -53,16 +44,15 @@ export default class Searchbar extends Component {
             autocomplete="off"
             autoFocus
             placeholder="Search images and photos"
-            onChange={this.onChange}
+            onChange={onChange}
             value={query}
           />
         </SearchForm>
       </SearchbarHeader>
-
       </>
-
-
     );
   }
-}
 
+Searchbar.propTypes = {
+  onSubmit: PropTypes.func.isRequired
+};

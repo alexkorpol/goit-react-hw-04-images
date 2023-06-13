@@ -2,7 +2,7 @@ import Notiflix from 'notiflix';
 
 const API_KEY = '35599387-daff3be7791dba4aa3b1a02ca';
 const BASE_URL = 'https://pixabay.com/api';
-export const PER_PAGE =12;
+export const PER_PAGE = 12;
 
 const searchParams = new URLSearchParams({
       key: API_KEY,
