@@ -12,7 +12,7 @@ const searchParams = new URLSearchParams({
       per_page: PER_PAGE,
 });
 
-export const getImages = async (query, page = 1) => {
+export const getImages = async (query, page) => {
   try {
     const data = await fetch(
       `${BASE_URL}/?q=${query}&page=${page}&${searchParams}`,

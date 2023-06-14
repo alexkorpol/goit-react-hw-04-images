@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect, useRef} from 'react';
 import Searchbar from "./Searchbar";
 import ImageGallery from './ImageGallery';
 import { Button } from './Button/Button.styled';
@@ -6,7 +6,6 @@ import { PER_PAGE, getImages } from './api/api';
 import Loader from 'components/Loader';
 import Modal from './Modal';
 import Notiflix from 'notiflix';
-
 
 export default function App() {
 
@@ -16,8 +15,8 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalParams, setmodalParams] = useState({ imageModal:'', tagModal:''});
-  const [totalPage, setTotalPage] = useState(0);
-  const {imageModal, tagModal} = modalParams;
+  const { imageModal, tagModal } = modalParams;
+  const totalPage = useRef(0);
 
   useEffect(() => {
     const getPhotos = async () => {
@@ -27,16 +26,15 @@ export default function App() {
       try {
         const { totalHits, hits } = await getImages(query, page);
         if (totalHits === 0) {
-          setTotalPage(0);
           Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.");
           return;
         }
         if (page === 1) {
           Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
-          setTotalPage(totalHits / PER_PAGE); // count totalPage
+          totalPage.current = (Math.ceil(totalHits / PER_PAGE)); // count totalPage
         };
 
-        if (page === totalPage) {
+        if (page === totalPage.current) {
           Notiflix.Notify.warning(
             "We're sorry, but you've reached the end of search results.");
         }
@@ -48,7 +46,7 @@ export default function App() {
       };
     }
     getPhotos();
-  }, [query, page, totalPage]
+  }, [query, page]
   );
 
     // ! ====== Write user query to state ======
@@ -60,7 +58,7 @@ export default function App() {
 
     // ! ====== Increment page number (+1) after click button "Load More" ======
     const handleButtonClick = () => {
-      setPage(prevState => prevState + 1);
+      setPage(prevPage => prevPage + 1);
     }
 
     // ! ====== Open Modal =======
@@ -73,7 +71,7 @@ export default function App() {
     // ! ====== Close Modal =======
     const onCloseModal = () => {
       setShowModal( false );
-  };
+    };
 
       return (
         <>
@@ -83,7 +81,7 @@ export default function App() {
 
 
           {loading && <Loader isLoading={loading} />}
-          {(!loading && totalPage > 1 && page < totalPage) &&
+          {(!loading && totalPage.current > 1 && page < totalPage.current) &&
             <Button onClick={handleButtonClick}>Load more</Button>}
 
           {showModal && (

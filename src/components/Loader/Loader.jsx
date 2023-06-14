@@ -1,4 +1,5 @@
 import { Vortex } from 'react-loader-spinner';
+import PropTypes from 'prop-types';
 
 const Loader = ({ isLoading }) => {
   return (
@@ -20,3 +21,6 @@ const Loader = ({ isLoading }) => {
 
 export default Loader
 
+  Loader.propTypes = {
+  isLoading :PropTypes.bool.isRequired
+}
